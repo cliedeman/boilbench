@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
+	entsql "github.com/facebook/ent/dialect/sql"
+	"github.com/volatiletech/boilbench/ents"
 	"testing"
 
 	"github.com/volatiletech/boilbench/gorms"
@@ -114,6 +116,32 @@ func BenchmarkBoilInsert(b *testing.B) {
 
 		for i := 0; i < b.N; i++ {
 			err := store.Insert(ctx, db, boil.Infer())
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+func BenchmarkEntInsert(b *testing.B) {
+	exec := jetExec()
+	exec.NumInput = -1
+	mimic.NewResult(exec)
+
+	db, err := entsql.Open("mimic", "")
+	if err != nil {
+		panic(err)
+	}
+
+	client := ents.NewClient(ents.Driver(db))
+
+	b.Run("ent", func(b *testing.B) {
+		ctx := context.Background()
+
+		for i := 0; i < b.N; i++ {
+			_, err := client.Jet.Create().
+				SetID(1).
+				Save(ctx)
 			if err != nil {
 				b.Fatal(err)
 			}

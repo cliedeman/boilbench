@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
+	entsql "github.com/facebook/ent/dialect/sql"
+	"github.com/volatiletech/boilbench/ents"
 	"testing"
 
 	"github.com/volatiletech/boilbench/gorms"
@@ -111,6 +113,29 @@ func BenchmarkBoilDelete(b *testing.B) {
 		ctx := context.Background()
 		for i := 0; i < b.N; i++ {
 			_, err := store.Delete(ctx, db)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+func BenchmarkEntDelete(b *testing.B) {
+	exec := jetExec()
+	exec.NumInput = -1
+	mimic.NewResult(exec)
+
+	db, err := entsql.Open("mimic", "")
+	if err != nil {
+		panic(err)
+	}
+
+	client := ents.NewClient(ents.Driver(db))
+
+	b.Run("ent", func(b *testing.B) {
+		ctx := context.Background()
+		for i := 0; i < b.N; i++ {
+			_, err := client.Jet.Delete().Exec(ctx)
 			if err != nil {
 				b.Fatal(err)
 			}

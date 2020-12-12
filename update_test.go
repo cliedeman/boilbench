@@ -118,3 +118,28 @@ func BenchmarkBoilUpdate(b *testing.B) {
 		}
 	})
 }
+
+/*
+func BenchmarkEntUpdate(b *testing.B) {
+	exec := jetExecUpdate()
+	exec.NumInput = -1
+	mimic.NewResult(exec)
+
+	db, err := entsql.Open("mimic", "")
+	if err != nil {
+		panic(err)
+	}
+
+	client := ents.NewClient(ents.Driver(db))
+
+	b.Run("ent", func(b *testing.B) {
+		ctx := context.Background()
+		for i := 0; i < b.N; i++ {
+			err := client.Jet.Update().Where(jet.ID(1)).Exec(ctx)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+*/

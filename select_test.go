@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"database/sql"
+	entsql "github.com/facebook/ent/dialect/sql"
+	"github.com/volatiletech/boilbench/ents"
 	"testing"
 
 	"github.com/volatiletech/boilbench/gorms"
@@ -104,6 +106,29 @@ func BenchmarkBoilSelectAll(b *testing.B) {
 	})
 }
 
+func BenchmarkEntSelectAll(b *testing.B) {
+	query := jetQueryEnt()
+	mimic.NewQuery(query)
+
+	db, err := entsql.Open("mimic", "")
+	if err != nil {
+		panic(err)
+	}
+
+	client := ents.NewClient(ents.Driver(db))
+
+	b.Run("ent", func(b *testing.B) {
+		ctx := context.Background()
+		for i := 0; i < b.N; i++ {
+			_, err = client.Jet.Query().
+				All(ctx)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
 func BenchmarkGORMSelectSubset(b *testing.B) {
 	var store []gorms.Jet
 	query := jetQuery()
@@ -184,7 +209,44 @@ func BenchmarkBoilSelectSubset(b *testing.B) {
 	b.Run("boil", func(b *testing.B) {
 		ctx := context.Background()
 		for i := 0; i < b.N; i++ {
-			_, err = models.Jets(qm.Select("id, name, color, uuid, identifier, cargo, manifest")).All(ctx, db)
+			_, err = models.Jets(qm.Select("id, name, color, uuid, identifier, cargo, manifest")).
+				All(ctx, db)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+func BenchmarkEntSelectSubset(b *testing.B) {
+	query := jetQuery()
+	mimic.NewQuery(query)
+
+	db, err := entsql.Open("mimic", "")
+	if err != nil {
+		panic(err)
+	}
+
+	client := ents.NewClient(ents.Driver(db))
+
+	b.Run("ent", func(b *testing.B) {
+		ctx := context.Background()
+		var v []struct {
+			ID   int
+			Name string `json:"name,omitempty"`
+			// TODO: these 2 should not be required
+			PilotID    *int    `json:"pilot_id,omitempty"`
+			AirportID  *int    `json:"airport_id,omitempty"`
+			Color      *string `json:"color"`
+			UUID       *string `json:"uuid"`
+			Identifier *string `json:"identifier"`
+			Cargo      []byte  `json:"cargo"`
+			Manifest   []byte  `json:"manifest"`
+		}
+
+		for i := 0; i < b.N; i++ {
+			err = client.Jet.Query().Select("id", "name", "color", "uuid", "identifier", "cargo", "manifest").
+				Scan(ctx, &v)
 			if err != nil {
 				b.Fatal(err)
 			}
@@ -299,6 +361,44 @@ func BenchmarkBoilSelectComplex(b *testing.B) {
 				qm.GroupBy("id"),
 				qm.Offset(1),
 			).All(ctx, db)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+func BenchmarkEntSelectComplex(b *testing.B) {
+	query := jetQueryEnt()
+	mimic.NewQuery(query)
+
+	db, err := entsql.Open("mimic", "")
+	if err != nil {
+		panic(err)
+	}
+
+	client := ents.NewClient(ents.Driver(db))
+
+	b.Run("ent", func(b *testing.B) {
+		ctx := context.Background()
+		var v []struct {
+			ID         int
+			Name       string  `json:"name,omitempty"`
+			Color      *string `json:"color"`
+			UUID       *string `json:"uuid"`
+			Identifier *string `json:"identifier"`
+			Cargo      []byte  `json:"cargo"`
+			Manifest   []byte  `json:"manifest"`
+		}
+
+		for i := 0; i < b.N; i++ {
+			err = client.Jet.Query().
+				// TODO: breaks
+				// Where(jet.IDGT(1), jet.NameNEQ("thing")).
+				Limit(1).
+				Offset(1).
+				GroupBy("id").
+				Scan(ctx, &v)
 			if err != nil {
 				b.Fatal(err)
 			}
