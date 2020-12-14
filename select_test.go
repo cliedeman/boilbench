@@ -219,7 +219,7 @@ func BenchmarkBoilSelectSubset(b *testing.B) {
 }
 
 func BenchmarkEntSelectSubset(b *testing.B) {
-	query := jetQuery()
+	query := jetQueryEnt()
 	mimic.NewQuery(query)
 
 	db, err := entsql.Open("mimic", "")
@@ -232,11 +232,8 @@ func BenchmarkEntSelectSubset(b *testing.B) {
 	b.Run("ent", func(b *testing.B) {
 		ctx := context.Background()
 		var v []struct {
-			ID   int
-			Name string `json:"name,omitempty"`
-			// TODO: these 2 should not be required
-			PilotID    *int    `json:"pilot_id,omitempty"`
-			AirportID  *int    `json:"airport_id,omitempty"`
+			ID         int
+			Name       string  `json:"name,omitempty"`
 			Color      *string `json:"color"`
 			UUID       *string `json:"uuid"`
 			Identifier *string `json:"identifier"`
