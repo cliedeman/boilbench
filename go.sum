@@ -59,6 +59,8 @@ github.com/dgryski/go-sip13 v0.0.0-20181026042036-e10d5fee7954/go.mod h1:vAd38F8
 github.com/ericlagergren/decimal v0.0.0-20181231230500-73749d4874d5/go.mod h1:1yj25TwtUlJ+pfOu9apAVaM1RWfZGg+aFpd4hPQZekQ=
 github.com/facebook/ent v0.5.2 h1:xImCaExB+bZtS6/pSCsjAJ4ShiS9PnQNtP4LedCZj64=
 github.com/facebook/ent v0.5.2/go.mod h1:tlWP+qCd3x2EeO7B/EqlJQ4dWu/2IeYFhP/szzDKAi8=
+github.com/facebook/ent v0.5.4-0.20201214081621-43fa0ae9bc41 h1:GVZCuFrn8OT/D7gFbyZj3MVWusz0zUSOpyJyUPni50k=
+github.com/facebook/ent v0.5.4-0.20201214081621-43fa0ae9bc41/go.mod h1:tlWP+qCd3x2EeO7B/EqlJQ4dWu/2IeYFhP/szzDKAi8=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/friendsofgo/errors v0.9.2 h1:X6NYxef4efCBdwI7BgS820zFaN7Cphrmb+Pljdzjtgk=
 github.com/friendsofgo/errors v0.9.2/go.mod h1:yCvFW5AkDIL9qn7suHVLiI/gH228n7PC4Pn44IGoTOI=

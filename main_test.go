@@ -1,7 +1,10 @@
 package main
 
 import (
+	"database/sql"
 	"database/sql/driver"
+	entsql "github.com/facebook/ent/dialect/sql"
+	"github.com/volatiletech/boilbench/ents"
 	"os"
 	"testing"
 
@@ -171,6 +174,18 @@ func jetExecUpdate() mimic.QueryResult {
 var gormMimicDialector = postgres.New(postgres.Config{
 	DriverName: "mimic",
 })
+
+func openEnt() *ents.Client {
+	db, err := sql.Open("mimic", "")
+
+	if err != nil {
+		panic(err)
+	}
+
+	entDb := entsql.OpenDB("postgres", db)
+
+	return ents.NewClient(ents.Driver(entDb))
+}
 
 func TestMain(m *testing.M) {
 	dialects.RegisterDriver("mimic", &mimic.XormDriver{})

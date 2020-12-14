@@ -3,7 +3,7 @@ module github.com/volatiletech/boilbench
 go 1.14
 
 require (
-	github.com/facebook/ent v0.5.2
+	github.com/facebook/ent v0.5.4-0.20201214081621-43fa0ae9bc41
 	github.com/friendsofgo/errors v0.9.2
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/volatiletech/null/v8 v8.1.0

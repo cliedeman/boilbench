@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	entsql "github.com/facebook/ent/dialect/sql"
-	"github.com/volatiletech/boilbench/ents"
 	"testing"
 
 	"github.com/volatiletech/boilbench/gorms"
@@ -128,12 +126,7 @@ func BenchmarkEntInsert(b *testing.B) {
 	exec.NumInput = -1
 	mimic.NewResult(exec)
 
-	db, err := entsql.Open("mimic", "")
-	if err != nil {
-		panic(err)
-	}
-
-	client := ents.NewClient(ents.Driver(db))
+	client := openEnt()
 
 	b.Run("ent", func(b *testing.B) {
 		ctx := context.Background()

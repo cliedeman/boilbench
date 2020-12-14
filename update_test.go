@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"github.com/volatiletech/boilbench/ents/jet"
 	"testing"
 
 	"github.com/volatiletech/boilbench/gorms"
@@ -119,18 +120,12 @@ func BenchmarkBoilUpdate(b *testing.B) {
 	})
 }
 
-/*
 func BenchmarkEntUpdate(b *testing.B) {
 	exec := jetExecUpdate()
 	exec.NumInput = -1
 	mimic.NewResult(exec)
 
-	db, err := entsql.Open("mimic", "")
-	if err != nil {
-		panic(err)
-	}
-
-	client := ents.NewClient(ents.Driver(db))
+	client := openEnt()
 
 	b.Run("ent", func(b *testing.B) {
 		ctx := context.Background()
@@ -142,4 +137,3 @@ func BenchmarkEntUpdate(b *testing.B) {
 		}
 	})
 }
-*/

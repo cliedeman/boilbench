@@ -372,12 +372,7 @@ func BenchmarkEntSelectComplex(b *testing.B) {
 	query := jetQueryEnt()
 	mimic.NewQuery(query)
 
-	db, err := entsql.Open("mimic", "")
-	if err != nil {
-		panic(err)
-	}
-
-	client := ents.NewClient(ents.Driver(db))
+	client := openEnt()
 
 	b.Run("ent", func(b *testing.B) {
 		ctx := context.Background()
@@ -392,9 +387,9 @@ func BenchmarkEntSelectComplex(b *testing.B) {
 		}
 
 		for i := 0; i < b.N; i++ {
-			err = client.Jet.Query().
-				// TODO: breaks
-				// Where(jet.IDGT(1), jet.NameNEQ("thing")).
+			err := client.Jet.Query().
+				// TODO: not sure why this breaks
+				// Where(jet.IDGT(1),jet.NameNEQ("thing")).
 				Limit(1).
 				Offset(1).
 				GroupBy("id").
